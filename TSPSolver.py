@@ -81,10 +81,51 @@ class TSPSolver:
 		algorithm</returns> 
 	'''
 
+	class Node:
+		def __init__(self, index, degree):
+			self.cityIndex = index
+			self.degree = degree
+
+		def updateDegree(self, newDegree):
+			degree = newDegree
+
+	class EdgeVal:
+		def __init__(self, node1, node2, cost):
+			self.node1 = node1
+			self.node2 = node2
+			self.cost = cost
+
+
+
 	def greedy( self,time_allowance=60.0 ):
-		pass
-	
-	
+		results = {}
+		cities = self._scenario.getCities()
+		ncities = len(cities)
+		foundTour = False
+		count = 0
+		bssf = None
+		start_time = time.time()
+		sortedEdges = []
+		for i in range(ncities):
+			for j in range(i + 1, ncities):
+				cost = cities[i].costTo(cities[j])
+				if cost == math.inf:
+					continue
+				node1 = self.Node(i, 0)
+				node2 = self.Node(j, 0)
+				newEdge = self.EdgeVal(node1, node2, cost)
+				sortedEdges.append(newEdge)
+		sortedEdges.sort(key=lambda x: x.cost)
+		edgeRoute = []
+		for edgeIndex in range(len(sortedEdges)):
+			if len(edgeRoute) == ncities:
+				break
+			sortedEdges[edgeIndex].node1.degree += 1
+			sortedEdges[edgeIndex].node2.degree += 1
+			if sortedEdges[edgeIndex].node1.degree <= 2 and sortedEdges[edgeIndex].node2.degree <= 2:
+				edgeRoute.append(sortedEdges[edgeIndex])
+		return results
+
 	
 	''' <summary>
 		This is the entry point for the branch-and-bound algorithm that you will implement
