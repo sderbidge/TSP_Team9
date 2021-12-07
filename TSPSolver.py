@@ -76,11 +76,73 @@ class TSPSolver:
 		algorithm</returns> 
 	'''
 
-    def greedy(self, time_allowance=60.0):
+	class Node:
+		def __init__(self, index, degree):
+			self.cityIndex = index
+			self.degree = degree
 
-        pass
+		def updateDegree(self, newDegree):
+			degree = newDegree
 
-    ''' <summary>
+	class EdgeVal:
+		def __init__(self, node1, node2, cost):
+			self.node1 = node1
+			self.node2 = node2
+			self.cost = cost
+
+	def greedy(self, time_allowance=60.0):
+		results = {}
+		cities = self._scenario.getCities()
+		ncities = len(cities)
+		start_time = time.time()
+		sortedEdges = []
+		for i in range(ncities):
+			for j in range(i + 1, ncities):
+				cost = cities[i].costTo(cities[j])
+				if cost == math.inf:
+					continue
+				node1 = self.Node(i, 0)
+				node2 = self.Node(j, 0)
+				newEdge = self.EdgeVal(node1, node2, cost)
+				sortedEdges.append(newEdge)
+		sortedEdges.sort(key=lambda x: x.cost)
+		edgeRoute = []
+		visited = set()
+		for edgeIndex in range(len(sortedEdges)):
+			if len(edgeRoute) == ncities:
+				break
+
+			if (not (sortedEdges[edgeIndex].node2.cityIndex in visited)) or (sortedEdges[edgeIndex].node1.degree < 2 and sortedEdges[edgeIndex].node2.degree < 2 and len(edgeRoute) == ncities - 1):
+				self.updateDegree(sortedEdges, sortedEdges[edgeIndex].node1.cityIndex)
+				self.updateDegree(sortedEdges, sortedEdges[edgeIndex].node2.cityIndex)
+				visited.add(sortedEdges[edgeIndex].node2.cityIndex)
+				edgeRoute.append(sortedEdges[edgeIndex])
+		route = []
+		for i in range(len(edgeRoute) - 1, -1, -1):
+			if i == 0:
+				route.append(cities[edgeRoute[i].node1.cityIndex])
+				route.append(cities[edgeRoute[i].node2.cityIndex])
+			else:
+				route.append(cities[edgeRoute[i].node2.cityIndex])
+		end_time = time.time()
+		bssf = TSPSolution(route)
+		results['cost'] = bssf.cost
+		results['time'] = end_time - start_time
+		results['count'] = 1
+		results['soln'] = bssf
+		results['max'] = None
+		results['total'] = None
+		results['pruned'] = None
+		return results
+
+	def updateDegree(self, list, cityIndex):
+		for i in range(len(list)):
+			if list[i].node1.cityIndex == cityIndex:
+				list[i].node1.degree += 1
+			elif list[i].node2.cityIndex == cityIndex:
+				list[i].node2.degree += 1
+
+	''' <summary>
 		This is the entry point for the branch-and-bound algorithm that you will implement
 		</summary>
 		<returns>results dictionary for GUI that contains three ints: cost of best solution, 
