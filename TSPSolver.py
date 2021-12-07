@@ -121,7 +121,7 @@ class TSPSolver:
 		for i in range(len(edgeRoute) - 1, -1, -1):
 			if i == 0:
 				route.append(cities[edgeRoute[i].node1.cityIndex])
-				# route.append(cities[edgeRoute[i].node2.cityIndex])
+				route.append(cities[edgeRoute[i].node2.cityIndex])
 			else:
 				route.append(cities[edgeRoute[i].node2.cityIndex])
 		end_time = time.time()
