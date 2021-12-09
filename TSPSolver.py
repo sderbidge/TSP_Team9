@@ -77,6 +77,30 @@ class TSPSolver:
         '''
 
     def greedy(self, time_allowance=60.0):
+        pass
+
+    ''' <summary>
+    This is the entry point for the branch-and-bound algorithm that you will implement
+    </summary>
+    <returns>results dictionary for GUI that contains three ints: cost of best solution, 
+    time spent to find best solution, total number solutions found during search (does
+    not include the initial BSSF), the best solution found, and three more ints: 
+    max queue size, total number of states created, and number of pruned states.</returns> 
+    '''
+
+    def branchAndBound(self, time_allowance=60.0):
+        pass
+
+    ''' <summary>
+    This is the entry point for the algorithm you'll write for your group project.
+    </summary>
+    <returns>results dictionary for GUI that contains three ints: cost of best solution, 
+    time spent to find best solution, total number of solutions found during search, the 
+    best solution found.  You may use the other three field however you like.
+    algorithm</returns> 
+    '''
+
+    def fancy(self, time_allowance=60.0):
         cities = self._scenario.getCities()
         foundTour = False
         count = 0
@@ -118,77 +142,6 @@ class TSPSolver:
 
         end_time = time.time()
         return self.createResults(bssf, start_time, end_time, count, foundTour, 0)
-
-    ''' <summary>
-    This is the entry point for the branch-and-bound algorithm that you will implement
-    </summary>
-    <returns>results dictionary for GUI that contains three ints: cost of best solution, 
-    time spent to find best solution, total number solutions found during search (does
-    not include the initial BSSF), the best solution found, and three more ints: 
-    max queue size, total number of states created, and number of pruned states.</returns> 
-    '''
-
-    def branchAndBound(self, time_allowance=60.0):
-        pass
-
-    ''' <summary>
-    This is the entry point for the algorithm you'll write for your group project.
-    </summary>
-    <returns>results dictionary for GUI that contains three ints: cost of best solution, 
-    time spent to find best solution, total number of solutions found during search, the 
-    best solution found.  You may use the other three field however you like.
-    algorithm</returns> 
-    '''
-
-    def fancy(self, time_allowance=60.0):
-        cities = self._scenario.getCities()
-        foundTour = False
-        count = 0
-        bssf = None
-        results = {}
-        start_time = time.time()
-        route = []
-        while not foundTour and time.time() - start_time < time_allowance:
-            visited = set()
-            current_city = cities[count]
-            route.clear()
-            route.append(cities[count])
-            while len(visited) < len(cities):
-                visited.add(current_city)
-                max_city = None
-                max_cost = 0
-                for testCity in cities:
-                    if testCity not in visited:
-                        if max_cost < current_city.costTo(testCity) < math.inf:
-                            max_cost = current_city.costTo(testCity)
-                            max_city = testCity
-
-                if max_city is None:
-                    break
-
-                route.append(max_city)
-                current_city = max_city
-
-            count += 1
-            route_cost = TSPSolution(route).cost
-            if len(visited) == len(cities) and route_cost < math.inf:
-                if bssf is None:
-                    bssf = TSPSolution(route)
-                elif route_cost < bssf.cost:
-                    bssf = TSPSolution(route)
-
-            if count == len(cities):
-                foundTour = True
-
-        end_time = time.time()
-        results['cost'] = bssf.cost
-        results['time'] = end_time - start_time
-        results['count'] = count
-        results['soln'] = bssf
-        results['max'] = 0
-        results['total'] = None
-        results['pruned'] = None
-        return results
 
 
 
